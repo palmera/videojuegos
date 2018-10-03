@@ -22,6 +22,7 @@ public class BasicMovement : MonoBehaviour {
         loadLanes();
 
         this.path = lanes[startLane];
+        currentLane = startLane;
         this.currentLap = 0;
     }
 
@@ -98,11 +99,6 @@ public class BasicMovement : MonoBehaviour {
             Vector2 touchPosition = touch.position;
             return touchPosition.x < Screen.width / 2;
         }
-        bool a = Input.GetKeyDown(KeyCode.LeftArrow);
-        if (a)
-        {
-            Debug.Log("moving in " + a);
-        }
 
         return Input.GetKeyDown(KeyCode.LeftArrow);
     }
@@ -115,27 +111,25 @@ public class BasicMovement : MonoBehaviour {
             Vector2 touchPosition = touch.position;
             return touchPosition.x > Screen.width / 2;
         }
-        bool a = Input.GetKeyDown(KeyCode.RightArrow);
-        if (a)
-        {
-            Debug.Log("moving out " + a);
-        }
         return Input.GetKeyDown(KeyCode.RightArrow);
     }
-    
+
 	void Update () {
         if (!isBot)
         {
             if (moveIn())
             {
-                currentLane = currentLane == 0 ? 0 : currentLane--;
-                Debug.Log("lane " + currentLane);
+                if (currentLane > 0){
+                    currentLane--;
+
+                }
             }
             else if (moveOut())
             {
+
                 int maxLanes = track.childCount -1;
-                currentLane = currentLane == maxLanes ? maxLanes : currentLane++;
-                Debug.Log("lane " + currentLane);
+                if (currentLane != maxLanes)
+                    currentLane++;
             }
 
             this.path = lanes[currentLane];
@@ -153,35 +147,28 @@ public class BasicMovement : MonoBehaviour {
         }
         else
         {
-            //s = 0;
             currentLap = currentLap - lapTime;
             s = currentLap / lapTime;
             pos = this.path.GetPos(s);
-            //currentLap = 0;
-            lapTime = lapTime * (float)0.9;
+            if (!isBot)
+            {
+                lapTime = lapTime * (float)0.9;
+            }
         }
-        // Vector2 lookAt = new Vector2(car.ve);
-        //Debug.Log("look at: " + car.velocity);
-        //this.transform.LookAt(car.velocity);
-        //Vector3 dx = new Vector3(0, this.transform.position.x - (float)pos.X, this.transform.position.y - (float)pos.Y);
-        //Debug.Log("dx.x: " + dx.x + "dx.y: " + dx.y + "dx.z: " + dx.z);
-        //float tan = dx.y / dx.z;
-        //Debug.Log("tan: " + tan);
-        //float angle = Mathf.Atan(tan);
-        //Debug.Log("tan angle: " + angle);
-        //float angle2 = Mathf.Atan2(dx.z, dx.y);
-        
-        //Point nextPoint = path.GetCurrentEndPoint();
-        //Debug.Log("nextPoint: " + nextPoint);
-        //Vector3 nextTarget = new Vector3((float)nextPoint.X+90, (float)nextPoint.Y);
-        //this.transform.LookAt(nextTarget);
         if (pos.X == 0 && pos.Y == 0)
         {
             Debug.Log("path: " + this.path.name);
             Debug.Log("s: " + s);
         }
-        this.transform.position = new Vector3((float)pos.X, (float)pos.Y);
-        //this.transform.Rotate(0, 0, angle);
+        Debug.Log(this.transform.rotation);
+        Vector3 nextPos = new Vector3((float)pos.X, (float)pos.Y);
+
+        Vector3 diff = nextPos - transform.position;
+        diff.Normalize();
+
+        float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        this.transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+        this.transform.position = nextPos;
 
     }
 }
