@@ -39,18 +39,49 @@ public class BasicMovement : MonoBehaviour {
         for (int i = 0; i < lane.childCount; i++)
         {
             Transform vec = lane.GetChild(i);
+            IPath nextPath;
             int next = i + 1;
             if (next == lane.childCount)
             {
                 next = 0;
             }
-            Transform vec2 = lane.GetChild(next);
-            float x = vec.transform.position.x;
-            float y = vec.transform.position.y;
-            float x2 = vec2.transform.position.x;
-            float y2 = vec2.transform.position.y;
-            IPath lPath = new LinearPath(new Point(x, y), new Point(x2, y2));
-            cPath.AddPathSegment(lPath);
+
+            if (vec.childCount > 1)
+            {
+                // bezier path
+                Transform start = vec.GetChild(0);
+                Point startPoint = new Point(start.transform.position.x, start.transform.position.y);
+                Debug.Log("startPoint - x " + startPoint.X + " y: " + startPoint.Y);
+
+                Transform ch1 = vec.GetChild(1);
+                Point ch1Point = new Point(ch1.transform.position.x, ch1.transform.position.y);
+                Debug.Log("ch1Point  - x " + ch1Point.X + " y: " + ch1Point.Y);
+
+                Transform ch2 = vec.GetChild(2);
+                Point ch2Point = new Point(ch2.transform.position.x, ch2.transform.position.y);
+                Debug.Log("ch2Point - x " + ch2Point.X + " y: " + ch2Point.Y);
+
+                Transform end = vec.GetChild(3);
+                Point endPoint = new Point(end.transform.position.x, end.transform.position.y);
+                Debug.Log("endPoint - x " + endPoint.X + " y: " + endPoint.Y);
+
+                nextPath = new BezierPath(startPoint, ch1Point, ch2Point, endPoint);
+            } else {
+                //lineal path
+                Transform vec2 = lane.GetChild(next);
+                if (vec2.childCount > 1)
+                {
+                    vec2 = vec2.GetChild(0);
+                }
+                float x = vec.transform.position.x;
+                float y = vec.transform.position.y;
+                float x2 = vec2.transform.position.x;
+                float y2 = vec2.transform.position.y;
+                nextPath = new LinearPath(new Point(x, y), new Point(x2, y2));
+            }
+
+
+            cPath.AddPathSegment(nextPath);
         }
         return cPath;
     }

@@ -35,8 +35,8 @@ namespace Assets
 
         override public Point GetPos(float s)
         {
-            double x = start.X * Math.Pow((1 - s), 3) + checkpoint1.X * Math.Pow((1 - s), 2) * 3 * s + checkpoint2.X * Math.Pow((1 - s), 3) * Math.Pow(s, 2) + end.X * Math.Pow(s, 3);
-            double y = start.Y * Math.Pow((1 - s), 3) + checkpoint1.Y * Math.Pow((1 - s), 2) * 3 * s + checkpoint2.Y * Math.Pow((1 - s), 3) * Math.Pow(s, 2) + end.Y * Math.Pow(s, 3);
+            double x = start.X * Math.Pow((1 - s), 3) + checkpoint1.X * Math.Pow((1 - s), 2) * 3 * s + 3 * checkpoint2.X * (1 - s) * Math.Pow(s, 2) + end.X * Math.Pow(s, 3);
+            double y = start.Y * Math.Pow((1 - s), 3) + checkpoint1.Y * Math.Pow((1 - s), 2) * 3 * s + 3 * checkpoint2.Y * (1 - s) * Math.Pow(s, 2) + end.Y * Math.Pow(s, 3);
 
             return new Point(x, y);
         }
