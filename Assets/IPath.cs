@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEngine.Experimental.U2D.TriangleNet.Geometry;
+using UnityEngine;
 
 namespace Assets
 {
@@ -11,9 +11,10 @@ namespace Assets
         public float sStart;
         public float sEnd;
         public string name;
-        public abstract Point GetPos(float s);
-        public abstract Point GetEndPoint();
-        public abstract Point GetCurrentEndPoint();
+        public abstract Vector2 GetPos(float s);
+        public abstract Vector2 GetEndPoint();
+        public abstract Vector2 GetCurrentEndPoint();
         public abstract float GetLength();
+        public List<KeyValuePair<float, Vector2>> points;
     }
 }

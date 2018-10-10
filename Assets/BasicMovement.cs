@@ -1,13 +1,19 @@
 ﻿using Assets;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.U2D.TriangleNet.Geometry;
 
 public class BasicMovement : MonoBehaviour {
 
+    private bool hasMoved = false;
+    public bool collided = false;
+
+    public GameObject point;
+
     private IPath path;
-    private float currentLap;
+    public float currentLap = 0;
+    public float speed = 10;
     public float lapTime = 10;
     public Transform track;
     private IPath[] lanes;
@@ -15,24 +21,44 @@ public class BasicMovement : MonoBehaviour {
     public int startLane = 0;
     private int currentLane = 0;
     public bool isBot = true;
+    public bool debugging = false;
+
+    private int pointDensity = 500;
+
     
 	// Use this for initialization
 	void Start () {
         lanes = new IPath[track.childCount];
-        loadLanes();
+        LoadLanes();
 
-        this.path = lanes[startLane];
+        path = lanes[startLane];
         currentLane = startLane;
-        this.currentLap = 0;
     }
 
-    void loadLanes() { 
+    void LoadLanes() { 
         for (int i = 0; i < track.childCount; i++)
         {
             Transform lane = track.GetChild(i);
             ComplexPath lanPath = loadLane(lane);
             lanPath.name = "track" + i;
             lanes.SetValue(lanPath, i);
+            LoadLanePoints(lanPath);
+        }
+    }
+
+    private void LoadLanePoints(ComplexPath lanPath)
+    {
+        float s = (float)1 / pointDensity;
+        float sCount = s;
+        for (float i = 0; i < pointDensity; i++)
+        {
+            Vector2 p = lanPath.GetPos(sCount);
+            lanPath.points.Add(new KeyValuePair<float, Vector2>(sCount, p));
+            if(debugging) {
+                point.transform.position = p;
+                Instantiate(point);
+            }
+            sCount = sCount + s;
         }
     }
 
@@ -52,19 +78,19 @@ public class BasicMovement : MonoBehaviour {
             {
                 // bezier path
                 Transform start = vec.GetChild(0);
-                Point startPoint = new Point(start.transform.position.x, start.transform.position.y);
+                Vector2 startPoint = new Vector2(start.transform.position.x, start.transform.position.y);
                 //Debug.Log("startPoint - x " + startPoint.X + " y: " + startPoint.Y);
 
                 Transform ch1 = vec.GetChild(1);
-                Point ch1Point = new Point(ch1.transform.position.x, ch1.transform.position.y);
+                Vector2 ch1Point = new Vector2(ch1.transform.position.x, ch1.transform.position.y);
                 //Debug.Log("ch1Point  - x " + ch1Point.X + " y: " + ch1Point.Y);
 
                 Transform ch2 = vec.GetChild(2);
-                Point ch2Point = new Point(ch2.transform.position.x, ch2.transform.position.y);
+                Vector2 ch2Point = new Vector2(ch2.transform.position.x, ch2.transform.position.y);
                 //Debug.Log("ch2Point - x " + ch2Point.X + " y: " + ch2Point.Y);
 
                 Transform end = vec.GetChild(3);
-                Point endPoint = new Point(end.transform.position.x, end.transform.position.y);
+                Vector2 endPoint = new Vector2(end.transform.position.x, end.transform.position.y);
                 //Debug.Log("endPoint - x " + endPoint.X + " y: " + endPoint.Y);
 
                 nextPath = new BezierPath(startPoint, ch1Point, ch2Point, endPoint);
@@ -79,7 +105,7 @@ public class BasicMovement : MonoBehaviour {
                 float y = vec.transform.position.y;
                 float x2 = vec2.transform.position.x;
                 float y2 = vec2.transform.position.y;
-                nextPath = new LinearPath(new Point(x, y), new Point(x2, y2));
+                nextPath = new LinearPath(new Vector2(x, y), new Vector2(x2, y2));
             }
 
 
@@ -88,87 +114,100 @@ public class BasicMovement : MonoBehaviour {
         return cPath;
     }
 
-    // Update is called once per frame
-
-    private bool moveIn() {
-        //Debug.Log("move in: ");
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-        {
-            //Debug.Log("move in touch");
-            Touch touch = Input.GetTouch(0);
-            Vector2 touchPosition = touch.position;
-            return touchPosition.x < Screen.width / 2;
-        }
-
-        return Input.GetKeyDown(KeyCode.LeftArrow);
-    }
-    private bool moveOut() {
-        //Debug.Log("move out: --------------------------------");
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-        {
-            //Debug.Log("move out touch");
-            Touch touch = Input.GetTouch(0);
-            Vector2 touchPosition = touch.position;
-            return touchPosition.x > Screen.width / 2;
-        }
-        return Input.GetKeyDown(KeyCode.RightArrow);
-    }
-
-	void Update () {
-        if (!isBot)
-        {
-            if (moveIn())
-            {
-                if (currentLane > 0){
-                    currentLane--;
-
-                }
-            }
-            else if (moveOut())
-            {
-
-                int maxLanes = track.childCount -1;
-                if (currentLane != maxLanes)
-                    currentLane++;
-            }
-
-            this.path = lanes[currentLane];
-        }
-
-
-
-        Point pos;
+	void Update ()
+    {
         currentLap += Time.deltaTime;
+        Vector2 pos = GetNextPos();
+        MoveCar(pos);
+
+    }
+
+    public void MoveOut()
+    {
+        int maxLanes = track.childCount - 1;
+        if (currentLane != maxLanes)
+        {
+            currentLane++;
+            path = lanes[currentLane];
+            hasMoved = true;
+        }
+    }
+
+    public void MoveIn()
+    {
+        if (currentLane > 0)
+        {
+            currentLane--;
+            path = lanes[currentLane];
+            hasMoved = true;
+        }
+    }
+
+    private Vector2 GetNextPos()
+    {
+        Vector2 pos;
+        KeyValuePair<float, Vector2> closestPointInNextLane;
+        float newS = -1;
+        float pathLength = path.GetLength();
+        if (collided)
+        {
+            pathLength = pathLength * 2;
+        }
+        lapTime = pathLength / speed;
+        if (hasMoved)
+        {
+            closestPointInNextLane = GetClosestPoint(currentLane);
+            newS = closestPointInNextLane.Key;
+            currentLap = newS * lapTime;
+        }
         float s;
         if (currentLap < lapTime)
         {
-            s = currentLap / lapTime;
-            pos = this.path.GetPos(s);
+            s = hasMoved ? newS : currentLap / lapTime;
+            pos = path.GetPos(s);
         }
         else
         {
             currentLap = currentLap - lapTime;
             s = currentLap / lapTime;
-            pos = this.path.GetPos(s);
+            pos = path.GetPos(s);
             if (!isBot)
             {
-                lapTime = lapTime * (float)0.9;
+                speed = speed * (float)1.1;
             }
         }
-        if (pos.X == 0 && pos.Y == 0)
-        {
-            Debug.Log("path: " + this.path.name);
-            Debug.Log("s: " + s);
-        }
-        Debug.Log(this.transform.rotation);
-        Vector3 nextPos = new Vector3((float)pos.X, (float)pos.Y);
+        hasMoved = false;
+        return pos;
+    }
 
+    private void MoveCar(Vector2 pos)
+    {
+        Vector3 nextPos = new Vector3(pos.x, pos.y);
         Vector3 diff = nextPos - transform.position;
         diff.Normalize();
-
         float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        this.transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
-        this.transform.position = nextPos;
+        transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+        transform.position = nextPos;
+    }
 
+    private KeyValuePair<float, Vector2> GetClosestPoint(int nextLane)
+    {
+
+        List<KeyValuePair<float, Vector2>> points = this.lanes[nextLane].points;
+        Vector2 currentPosition = this.transform.position;
+        KeyValuePair<float, Vector2> closest = new KeyValuePair<float, Vector2>(-1, new Vector2(100000, 100000));
+        foreach (var item in points)
+        {
+            Vector2 v = item.Value;
+            Vector2 currentClosest = closest.Value;
+            Vector2 diff = currentPosition - v;
+            Vector2 currentDiff = currentPosition - currentClosest;
+            if (diff.magnitude < currentDiff.magnitude)
+            {
+                closest = item;
+            }
+        }
+
+        return closest;
     }
 }

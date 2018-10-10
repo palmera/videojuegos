@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using UnityEngine.Experimental.U2D.TriangleNet.Geometry;
 
 namespace Assets
 {
@@ -14,6 +13,7 @@ namespace Assets
         public ComplexPath()
         {
             paths = new List<IPath>();
+            points = new List<KeyValuePair<float, Vector2>>();
         }
 
         public List<IPath> GetPaths()
@@ -43,10 +43,9 @@ namespace Assets
             return length;
         }
 
-        override public Point GetPos(float s)
+        override public Vector2 GetPos(float s)
         {
-            Point resultingPos = new Point();
-            float totalLength = this.GetLength(); 
+            Vector2 resultingPos = new Vector2();
             foreach (IPath path in paths)
             {
                 if (path.sStart < s && path.sEnd > s)
@@ -56,21 +55,21 @@ namespace Assets
                     float current = s - path.sStart;
                     float pos = current / dif;
 
-                    Point relativePos = path.GetPos(pos);
-                    resultingPos.X += relativePos.X;
-                    resultingPos.Y += relativePos.Y;
+                    Vector2 relativePos = path.GetPos(pos);
+                    resultingPos.x += relativePos.x;
+                    resultingPos.y += relativePos.y;
                 }
             }
 
             return resultingPos;
         }
 
-        public override Point GetEndPoint()
+        public override Vector2 GetEndPoint()
         {
             return paths.Last<IPath>().GetEndPoint();
         }
 
-        public override Point GetCurrentEndPoint()
+        public override Vector2 GetCurrentEndPoint()
         {
             return this.currentPath.GetEndPoint();
         }

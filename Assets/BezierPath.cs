@@ -2,25 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEngine.Experimental.U2D.TriangleNet.Geometry;
+using UnityEngine;
 
 namespace Assets
 {
     public class BezierPath : IPath
     {
-        public Point start;
-        public Point checkpoint1;
-        public Point checkpoint2;
-        public Point end;
-        public BezierPath(Point start, Point checkpoint1, Point checkpoint2, Point end) {
+        public Vector2 start;
+        public Vector2 checkpoint1;
+        public Vector2 checkpoint2;
+        public Vector2 end;
+        public BezierPath(Vector2 start, Vector2 checkpoint1, Vector2 checkpoint2, Vector2 end) {
             this.start = start;
             this.checkpoint1 = checkpoint1;
             this.checkpoint2 = checkpoint2;
             this.end = end;
         }
 
-        private float Distance(Point origin, Point destiny) {
-            return (float)Math.Sqrt(Math.Pow((destiny.X - origin.X), 2) + Math.Pow((destiny.Y - origin.Y), 2));
+        private float Distance(Vector2 origin, Vector2 destiny) {
+            return (float)Math.Sqrt(Math.Pow((destiny.x - origin.x), 2) + Math.Pow((destiny.y - origin.y), 2));
         }
     
         override public float GetLength()
@@ -33,20 +33,20 @@ namespace Assets
             return (d1 + d2 + d3 + d4) / 2;
         }
 
-        override public Point GetPos(float s)
+        override public Vector2 GetPos(float s)
         {
-            double x = start.X * Math.Pow((1 - s), 3) + checkpoint1.X * Math.Pow((1 - s), 2) * 3 * s + 3 * checkpoint2.X * (1 - s) * Math.Pow(s, 2) + end.X * Math.Pow(s, 3);
-            double y = start.Y * Math.Pow((1 - s), 3) + checkpoint1.Y * Math.Pow((1 - s), 2) * 3 * s + 3 * checkpoint2.Y * (1 - s) * Math.Pow(s, 2) + end.Y * Math.Pow(s, 3);
+            double x = start.x * Math.Pow((1 - s), 3) + checkpoint1.x * Math.Pow((1 - s), 2) * 3 * s + 3 * checkpoint2.x * (1 - s) * Math.Pow(s, 2) + end.x * Math.Pow(s, 3);
+            double y = start.y * Math.Pow((1 - s), 3) + checkpoint1.y * Math.Pow((1 - s), 2) * 3 * s + 3 * checkpoint2.y * (1 - s) * Math.Pow(s, 2) + end.y * Math.Pow(s, 3);
 
-            return new Point(x, y);
+            return new Vector2((float)x, (float)y);
         }
 
-        public override Point GetEndPoint()
+        public override Vector2 GetEndPoint()
         {
             return end;
         }
 
-        public override Point GetCurrentEndPoint()
+        public override Vector2 GetCurrentEndPoint()
         {
             return end;
         }
