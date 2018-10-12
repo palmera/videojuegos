@@ -43,10 +43,10 @@ public class PlayerMovement : MonoBehaviour {
         Debug.Log("trigger in bm!!" + collision.ToString());
 
 
-        bm.speed = bm.speed / 2;
+      //  bm.speed = bm.speed / 2;
         bm.collided = true;
     }
-
+   
     // Update is called once per frame
     void Update () {
         if (moved())

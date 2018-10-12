@@ -8,6 +8,11 @@ public class BasicMovement : MonoBehaviour {
 
     private bool hasMoved = false;
     public bool collided = false;
+    public bool recoveringFromCollision = false;
+    private float collisionRecoveryTime = 0;
+    private float speedAtCollision = 0;
+    private float twinkleTime = 0.2f;
+    private float twinkleDelta = 0;
 
     public GameObject point;
 
@@ -22,6 +27,7 @@ public class BasicMovement : MonoBehaviour {
     private int currentLane = 0;
     public bool isBot = true;
     public bool debugging = false;
+    private float previousS;
 
     private int pointDensity = 500;
 
@@ -30,6 +36,7 @@ public class BasicMovement : MonoBehaviour {
 	void Start () {
         lanes = new IPath[track.childCount];
         LoadLanes();
+        previousS = 0;
 
         path = lanes[startLane];
         currentLane = startLane;
@@ -145,39 +152,82 @@ public class BasicMovement : MonoBehaviour {
 
     private Vector2 GetNextPos()
     {
-        Vector2 pos;
-        KeyValuePair<float, Vector2> closestPointInNextLane;
-        float newS = -1;
-        float pathLength = path.GetLength();
-        if (collided)
+        float time = Time.deltaTime;
+
+        if (collided && !recoveringFromCollision)
         {
-            pathLength = pathLength * 2;
+            GetComponent<Renderer>().enabled = false;
+            speedAtCollision = speed;
+            speed /= 3;
+            collided = false;
+            recoveringFromCollision = true;
         }
-        lapTime = pathLength / speed;
-        if (hasMoved)
-        {
-            closestPointInNextLane = GetClosestPoint(currentLane);
-            newS = closestPointInNextLane.Key;
-            currentLap = newS * lapTime;
-        }
-        float s;
-        if (currentLap < lapTime)
-        {
-            s = hasMoved ? newS : currentLap / lapTime;
-            pos = path.GetPos(s);
-        }
-        else
-        {
-            currentLap = currentLap - lapTime;
-            s = currentLap / lapTime;
-            pos = path.GetPos(s);
-            if (!isBot)
-            {
-                speed = speed * (float)1.1;
+        if(recoveringFromCollision){
+
+            twinkleDelta += time;
+            if(twinkleDelta > twinkleTime){
+                twinkleDelta = 0;
+                if(GetComponent<Renderer>().enabled == false)
+                    GetComponent<Renderer>().enabled = true;
+                else GetComponent<Renderer>().enabled = false;
+            }
+            collisionRecoveryTime += time;
+            if(speed < speedAtCollision){
+                speed+= collisionRecoveryTime * collisionRecoveryTime;
+            }
+            else{
+                GetComponent<Renderer>().enabled = true;
+                collisionRecoveryTime = 0;
+                recoveringFromCollision = false;
             }
         }
-        hasMoved = false;
+        float advance = time * speed;
+        float pathLength = path.GetLength();
+        float advancedPercentageInFrame = advance / pathLength;
+        float percentageOfLap = previousS + advancedPercentageInFrame;
+        if (percentageOfLap > 1)
+            percentageOfLap -= 1;
+        Vector2 pos = path.GetPos(percentageOfLap);
+        previousS = percentageOfLap;
         return pos;
+
+        /* Vector2 pos;
+         KeyValuePair<float, Vector2> closestPointInNextLane;
+         float newS = -1;
+         float pathLength = path.GetLength();
+
+         lapTime = pathLength / speed;
+         if (hasMoved)
+         {
+             closestPointInNextLane = GetClosestPoint(currentLane);
+             newS = closestPointInNextLane.Key;
+             currentLap = newS * lapTime;
+         }
+         float s;
+         if (currentLap < lapTime)
+         {
+             s = hasMoved ? newS : currentLap / lapTime;
+             pos = path.GetPos(s);
+         }
+         else
+         {
+             currentLap = currentLap - lapTime;
+             s = currentLap / lapTime;
+             pos = path.GetPos(s);
+             if (!isBot)
+             {
+                 speed = speed * (float)1.1;
+             }
+         }
+         if (collided)
+         {
+             //pathLength = pathLength * 2;
+             speed /= 2;
+             collided = false;
+         }
+         hasMoved = false;
+         previousS = s;
+         return pos;*/
     }
 
     private void MoveCar(Vector2 pos)
