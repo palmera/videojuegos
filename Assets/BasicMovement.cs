@@ -156,6 +156,7 @@ public class BasicMovement : MonoBehaviour {
 
         if (collided && !recoveringFromCollision)
         {
+            collisionRecoveryTime = 0; // SI HAY ALGO RARO BORRAR
             GetComponent<Renderer>().enabled = false;
             speedAtCollision = speed;
             speed /= 3;
@@ -191,43 +192,7 @@ public class BasicMovement : MonoBehaviour {
         previousS = percentageOfLap;
         return pos;
 
-        /* Vector2 pos;
-         KeyValuePair<float, Vector2> closestPointInNextLane;
-         float newS = -1;
-         float pathLength = path.GetLength();
-
-         lapTime = pathLength / speed;
-         if (hasMoved)
-         {
-             closestPointInNextLane = GetClosestPoint(currentLane);
-             newS = closestPointInNextLane.Key;
-             currentLap = newS * lapTime;
-         }
-         float s;
-         if (currentLap < lapTime)
-         {
-             s = hasMoved ? newS : currentLap / lapTime;
-             pos = path.GetPos(s);
-         }
-         else
-         {
-             currentLap = currentLap - lapTime;
-             s = currentLap / lapTime;
-             pos = path.GetPos(s);
-             if (!isBot)
-             {
-                 speed = speed * (float)1.1;
-             }
-         }
-         if (collided)
-         {
-             //pathLength = pathLength * 2;
-             speed /= 2;
-             collided = false;
-         }
-         hasMoved = false;
-         previousS = s;
-         return pos;*/
+      
     }
 
     private void MoveCar(Vector2 pos)
