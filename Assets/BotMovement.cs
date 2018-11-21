@@ -13,7 +13,7 @@ public class BotMovement : MonoBehaviour {
         bm = GetComponent<BasicMovement>();
         counterIn = 0;
         counterOut = 0;
-        bm.currentLap = Random.Range(0, bm.lapTime);
+        bm.previousS = Random.RandomRange(0.0f, 1.0f);
     }
 
     IEnumerator Example()

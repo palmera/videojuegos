@@ -27,7 +27,7 @@ public class BasicMovement : MonoBehaviour {
     private int currentLane = 0;
     public bool isBot = true;
     public bool debugging = false;
-    private float previousS;
+    public float previousS;
 
     private int pointDensity = 500;
 
@@ -36,7 +36,7 @@ public class BasicMovement : MonoBehaviour {
 	void Start () {
         lanes = new IPath[track.childCount];
         LoadLanes();
-        previousS = 0;
+        if (!isBot) previousS = 0;
 
         path = lanes[startLane];
         currentLane = startLane;
