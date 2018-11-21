@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 
     private BasicMovement bm;
+    public ScoreHandler scoreHandler;
     // Use this for initialization
     void Start () {
         bm = GetComponent<BasicMovement>();
@@ -41,9 +42,11 @@ public class PlayerMovement : MonoBehaviour {
     {
         Debug.Log("type" + collision.GetType());
         Debug.Log("trigger in bm!!" + collision.ToString());
+        if(!bm.collided){
+            scoreHandler.getHit();
+        }
 
-
-      //  bm.speed = bm.speed / 2;
+        //  bm.speed = bm.speed / 2;
         bm.collided = true;
     }
    
