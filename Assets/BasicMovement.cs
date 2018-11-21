@@ -6,19 +6,24 @@ using UnityEngine;
 
 public class BasicMovement : MonoBehaviour {
 
+    public int lapsBehind = 0;
     private bool hasMoved = false;
+    public bool isUser;
     public bool collided = false;
     public bool recoveringFromCollision = false;
     private float collisionRecoveryTime = 0;
     private float speedAtCollision = 0;
     private float twinkleTime = 0.2f;
+    public float distanceMade = 0.0f;
     private float twinkleDelta = 0;
+    private int numberOfLaps = 0;
 
     public GameObject point;
 
     private IPath path;
     public float currentLap = 0;
     public float speed = 10;
+    public float originalSpeed = 10;
     public float lapTime = 10;
     public Transform track;
     private IPath[] lanes;
@@ -158,8 +163,9 @@ public class BasicMovement : MonoBehaviour {
         {
             collisionRecoveryTime = 0; // SI HAY ALGO RARO BORRAR
             GetComponent<Renderer>().enabled = false;
-            speedAtCollision = speed;
-            speed /= 3;
+            speedAtCollision = originalSpeed;
+           // speed /= 3;
+            speed = originalSpeed / 3;
             collided = false;
             recoveringFromCollision = true;
         }
@@ -186,8 +192,13 @@ public class BasicMovement : MonoBehaviour {
         float pathLength = path.GetLength();
         float advancedPercentageInFrame = advance / pathLength;
         float percentageOfLap = previousS + advancedPercentageInFrame;
-        if (percentageOfLap > 1)
+        if (percentageOfLap > 1){
+            numberOfLaps++;
             percentageOfLap -= 1;
+        }
+        distanceMade = percentageOfLap+numberOfLaps;
+
+
         Vector2 pos = path.GetPos(percentageOfLap);
         previousS = percentageOfLap;
         return pos;

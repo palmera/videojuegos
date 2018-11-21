@@ -9,6 +9,9 @@ public class PlayerMovement : MonoBehaviour {
     // Use this for initialization
     void Start () {
         bm = GetComponent<BasicMovement>();
+        bm.isUser = true;
+        bm.speed = 13;
+        bm.originalSpeed = 13;
     }
 
     private bool movedIn()
@@ -52,6 +55,7 @@ public class PlayerMovement : MonoBehaviour {
    
     // Update is called once per frame
     void Update () {
+
         if (moved())
         {
             if (movedIn())
