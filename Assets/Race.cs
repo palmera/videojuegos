@@ -1,18 +1,34 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using Application;
 
 public class Race : MonoBehaviour
 {
     public Transform cars;
-    public ScoreHandler scoreHandler;
-    
+    public IScoreHandler scoreHandler;
+    public PracticeHandler practiceHandler;
+    public CrashHandler crashHandler;
+    public RaceHandler raceHandler;
+
     private int previousCarsInFront = 0;
     private int previousCarsInBack = 0;
     // Use this for initialization
     void Start()
     {
+        if (CurrentGame.GetInstance().GetPractice())
+        {
+            scoreHandler = practiceHandler;
+        }
+        else if (CurrentGame.GetInstance().GetCrash())
+        {
+            scoreHandler = crashHandler;
+        }
+        else scoreHandler = raceHandler;
         Debug.Log("race");
+        //practice ya esta
+        //chocas y perdes
+        //time trial
 
     }
 

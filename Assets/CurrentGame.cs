@@ -8,7 +8,7 @@ namespace Application
         private static CurrentGame instance;
         public CurrentGame()
         {
-            currentMode = 2;
+            currentMode = 0;
         } 
 
         public static CurrentGame GetInstance(){
@@ -43,6 +43,17 @@ namespace Application
         public Boolean GetCrash()
         {
             return currentMode == 2;
+        }
+
+        private bool lapDone = false;
+        public void JustMadeLap(){
+            lapDone = true;
+        }
+        public void AddTimeForLap(){
+            lapDone = false;
+        }
+        public bool LapForTime(){
+            return lapDone;
         }
     }
 }

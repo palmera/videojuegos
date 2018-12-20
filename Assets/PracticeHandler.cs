@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using Application;
 
-public class ScoreHandler : MonoBehaviour, IScoreHandler
+public class PracticeHandler : MonoBehaviour, IScoreHandler
 {
     private int score;
     public Text scoreText;
@@ -11,7 +11,8 @@ public class ScoreHandler : MonoBehaviour, IScoreHandler
     // public AudioClip MusicClip;
     // public AudioSource MusicSource;
     // Use this for initialization
-    public void Start () {
+    public void Start()
+    {
         // MusicSource.clip = MusicClip;
         score = 0;
         setText();
@@ -23,30 +24,30 @@ public class ScoreHandler : MonoBehaviour, IScoreHandler
         setText();
         if (score >= 2)
         {
-           //MusicSource.Play();
+            //MusicSource.Play();
             win();
         }
 
     }
 
-    public void getHit(){
-        if(CurrentGame.GetInstance().GetCrash()){
-            loose();
-        }
-        else{
+    public void getHit()
+    {
+       
             score = 0;
             setText();
-        }
 
 
-    }
-
-    public void makeLap(){
 
     }
 
+    public void makeLap()
+    {
 
-    private void setText(){
+    }
+
+
+    private void setText()
+    {
         scoreText.text = "" + score;
     }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Application;
 
 public class BasicMovement : MonoBehaviour {
 
@@ -39,6 +40,7 @@ public class BasicMovement : MonoBehaviour {
     
 	// Use this for initialization
 	void Start () {
+
         lanes = new IPath[track.childCount];
         LoadLanes();
         if (!isBot) previousS = 0;
@@ -193,6 +195,7 @@ public class BasicMovement : MonoBehaviour {
         float advancedPercentageInFrame = advance / pathLength;
         float percentageOfLap = previousS + advancedPercentageInFrame;
         if (percentageOfLap > 1){
+            CurrentGame.GetInstance().JustMadeLap();
             numberOfLaps++;
             percentageOfLap -= 1;
         }

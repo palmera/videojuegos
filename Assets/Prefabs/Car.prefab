@@ -152,6 +152,12 @@ MonoBehaviour:
   isBot: 0
   debugging: 0
   previousS: 0
+  raceHandler: {fileID: 114158566316958682, guid: f6655590584c84e7a9e955c201d4ba73,
+    type: 2}
+  crashHandler: {fileID: 114051338585092214, guid: 5e8dcd17a3abd4a3bb39beb8e38b3c6e,
+    type: 2}
+  practiceHandler: {fileID: 114746419987785096, guid: 1d3b4026575f54558b23cbf4256c40b5,
+    type: 2}
 --- !u!114 &114836236367474378
 MonoBehaviour:
   m_ObjectHideFlags: 1
