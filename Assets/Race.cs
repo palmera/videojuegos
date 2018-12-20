@@ -10,6 +10,9 @@ public class Race : MonoBehaviour
     public PracticeHandler practiceHandler;
     public CrashHandler crashHandler;
     public RaceHandler raceHandler;
+    public AudioClip pingSound;
+
+    private AudioSource source;
 
     private int previousCarsInFront = 0;
     private int previousCarsInBack = 0;
@@ -26,10 +29,14 @@ public class Race : MonoBehaviour
         }
         else scoreHandler = raceHandler;
         Debug.Log("race");
+<<<<<<< HEAD
         //practice ya esta
         //chocas y perdes
         //time trial
 
+=======
+        source = GetComponent<AudioSource>();
+>>>>>>> 697d2e2771d84a5626dcf317a27df39230085927
     }
 
     // Update is called once per frame
@@ -60,6 +67,7 @@ public class Race : MonoBehaviour
                 }
                 if(carsInBack > previousCarsInBack)
                 {
+                    source.PlayOneShot(pingSound);
                     int carsPassed = carsInBack - previousCarsInBack;
                     for (int i = 0; i < carsPassed;i++){
                         scoreHandler.passCar();

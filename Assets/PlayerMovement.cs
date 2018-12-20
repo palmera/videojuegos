@@ -5,11 +5,16 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 
     private BasicMovement bm;
+    public AudioClip crashSound;
+    public AudioClip tiresSound;
+
+    private AudioSource source;
     public ScoreHandler scoreHandler;
     // Use this for initialization
     void Start () {
         bm = GetComponent<BasicMovement>();
         bm.isUser = true;
+        source = GetComponent<AudioSource>();
     }
 
     private bool movedIn()
@@ -43,7 +48,8 @@ public class PlayerMovement : MonoBehaviour {
     {
         Debug.Log("type" + collision.GetType());
         Debug.Log("trigger in bm!!" + collision.ToString());
-        if(!bm.collided){
+        source.PlayOneShot(crashSound);
+        if (!bm.collided){
             scoreHandler.getHit();
         }
 
@@ -56,6 +62,7 @@ public class PlayerMovement : MonoBehaviour {
 
         if (moved())
         {
+            source.PlayOneShot(tiresSound);
             if (movedIn())
             {
                 bm.MoveIn();
