@@ -38,9 +38,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1156388305477758}
-  m_LocalRotation: {x: 0, y: -0, z: 0.7071068, w: -0.7071068}
-  m_LocalPosition: {x: 0.9, y: -8.68, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: -0.7071068}
+  m_LocalPosition: {x: -813.7, y: -444.76, z: 8.718237}
+  m_LocalScale: {x: 0.7199648, y: 0.7199648, z: 0.7199648}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -52,11 +52,11 @@ Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1156388305477758}
-  m_BodyType: 2
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 0.0001
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 0
@@ -74,7 +74,7 @@ PolygonCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -114,7 +114,7 @@ EdgeCollider2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1156388305477758}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
@@ -136,15 +136,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8066d8f4de308e3409bdbcee04561a65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lapsBehind: 0
+  isUser: 0
+  collided: 0
+  recoveringFromCollision: 0
+  distanceMade: 0
   point: {fileID: 1308865296245902, guid: 621b29a006f9d459a83417d6cdf0080d, type: 2}
   currentLap: 5
-  speed: 13
+  speed: 15
+  originalSpeed: 15
   lapTime: 10
   track: {fileID: 0}
   car: {fileID: 50489139608686242}
   startLane: 0
   isBot: 0
-  debugging: 1
+  debugging: 0
+  previousS: 0
 --- !u!114 &114836236367474378
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -156,6 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7748a0aa20c46cab52722d5479612a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreHandler: {fileID: 0}
 --- !u!212 &212225055440612290
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -191,7 +199,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 82ceb4d2627a8b347826f86100cc94d4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 848e87d59d3fae344813003621e4feff, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
