@@ -6,9 +6,12 @@ public class ScoreHandler : MonoBehaviour
 {
     private int score;
     public Text scoreText;
+
+    // public AudioClip MusicClip;
+    // public AudioSource MusicSource;
     // Use this for initialization
-    void Start()
-    {
+    void Start () {
+        // MusicSource.clip = MusicClip;
         score = 0;
         setText();
     }
@@ -17,19 +20,17 @@ public class ScoreHandler : MonoBehaviour
     {
         score++;
         setText();
-        if (score >= 10)
+        if (score >= 2)
         {
-            loose();
+           //MusicSource.Play();
+            win();
         }
 
     }
 
     public void getHit(){
-        score--;
+        score = 0;
         setText();
-        if(score<=5){
-            loose();
-        }
 
     }
 
@@ -40,10 +41,6 @@ public class ScoreHandler : MonoBehaviour
 
     private void win()
     {
-
-    }
-
-    private void loose(){
 
     }
 }

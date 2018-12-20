@@ -10,8 +10,6 @@ public class PlayerMovement : MonoBehaviour {
     void Start () {
         bm = GetComponent<BasicMovement>();
         bm.isUser = true;
-        bm.speed = 13;
-        bm.originalSpeed = 13;
     }
 
     private bool movedIn()
