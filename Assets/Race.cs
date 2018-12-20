@@ -6,14 +6,17 @@ public class Race : MonoBehaviour
 {
     public Transform cars;
     public ScoreHandler scoreHandler;
-    
+    public AudioClip pingSound;
+
+    private AudioSource source;
+
     private int previousCarsInFront = 0;
     private int previousCarsInBack = 0;
     // Use this for initialization
     void Start()
     {
         Debug.Log("race");
-
+        source = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -44,6 +47,7 @@ public class Race : MonoBehaviour
                 }
                 if(carsInBack > previousCarsInBack)
                 {
+                    source.PlayOneShot(pingSound);
                     int carsPassed = carsInBack - previousCarsInBack;
                     for (int i = 0; i < carsPassed;i++){
                         scoreHandler.passCar();
