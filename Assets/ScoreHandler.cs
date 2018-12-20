@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Application;
 
 public class ScoreHandler : MonoBehaviour
 {
     private int score;
     public Text scoreText;
-
+    public SceneSwitcher switcher;
     // public AudioClip MusicClip;
     // public AudioSource MusicSource;
     // Use this for initialization
@@ -29,8 +30,14 @@ public class ScoreHandler : MonoBehaviour
     }
 
     public void getHit(){
-        score = 0;
-        setText();
+        if(CurrentGame.GetInstance().GetCrash()){
+            loose();
+        }
+        else{
+            score = 0;
+            setText();
+        }
+
 
     }
 
@@ -42,5 +49,10 @@ public class ScoreHandler : MonoBehaviour
     private void win()
     {
 
+    }
+    private void loose()
+    {
+        switcher.GotoMainScene();
+        Debug.Log("Perdiste en " + score);
     }
 }
